@@ -1,1 +1,75 @@
-TR
+{% extends "myapp/base.html" %}
+
+{% load static %}
+
+{% block extra_style %}<link rel="stylesheet" type="text/css" href="{% static 'myapp/css/talk_room.css' %}" />{% endblock %}
+
+{% block header-back %}
+    <div class="back">
+        <a href="{% url "myapp:friends" %}" class="back-link">
+            <div class="back-text">戻る</div>
+        </a>
+    </div>
+{% endblock %}
+{% block header-title %}{{ friend.username }}{% endblock %}
+{% block header-update %}
+    <div class="update">
+        <a href="{% url "myapp:talk_room" friend.id %}" class="update-link">
+            <div class="update-text">更新</div>
+        </a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="talk-room">
+        {% for message in messages %}
+            {% if message.from_user == friend %}
+                <div class="left-box">
+                    <div class="user-info">
+                        <div class="icon">
+                            {% if friend.image %}
+                                <img src="{{ friend.image.url }}">
+                            {% else %}
+                                <img src="../../static/myapp/img/people-24px.svg">
+                            {% endif %}
+                        </div>
+                        <div class="username">{{ friend.username }}</div>
+                    </div>
+                    <div class="content">{{ message.content }}</div>
+                    <div class="pushed">
+                        <p class="pushed-date">{{ message.created_at|date:"n/d"}}</p>
+                        <p class="pushed-time">{{ message.created_at|date:"H:i"}}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="right-box">
+                    <div class="user-info">
+                        <div class="icon">
+                            {% if user.image %}
+                                <img src="{{ user.image.url }}">
+                            {% else %}
+                                <img src="../../static/myapp/img/people-24px.svg">
+                            {% endif %}
+                        </div>
+                        <div class="username">{{ user.username }}</div>
+                    </div>
+                    <div class="content">{{ message.content }}</div>
+                    <div class="pushed">
+                        <p class="pushed-date">{{ message.created_at|date:"n/d"}}</p>
+                        <p class="pushed-time">{{ message.created_at|date:"H:i"}}</p>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}
+{% block footer_item %}
+<form action="{% url 'myapp:talk_room' friend.id %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-box">{{ form.content }}</div>
+    <div class="form-button">
+        <button type="submit">send</button>
+    </div>
+</form>
+
+{% endblock %}

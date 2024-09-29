@@ -1,0 +1,19 @@
+.settings {
+    width: 100%;
+}
+
+.settings a {
+    text-decoration: none;
+}
+
+.update-box, .logout-box {
+    display: flex;
+    border: 1px solid #999;
+    border-radius: 5vw;
+    justify-content: center;
+    margin: 2vh 20vw;
+}
+
+.update-text, .logout-text {
+    color: #000;
+}

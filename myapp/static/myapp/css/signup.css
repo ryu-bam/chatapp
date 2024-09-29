@@ -1,0 +1,11 @@
+@charset "utf-8";
+
+table {
+    display: flex;
+    justify-content: center;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+}

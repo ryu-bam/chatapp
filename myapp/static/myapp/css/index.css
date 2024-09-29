@@ -1,0 +1,23 @@
+@charset "utf-8";
+
+.button {
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    width: 100%;
+}
+
+a {
+    display: flex;
+    border: 1px solid #999;
+    border-radius: 5vw;
+    color: #000;
+    font-size: xx-large;
+    justify-content: center;
+    margin: 0 20%;
+    text-decoration: none;
+}
+
+.login {
+    margin-bottom: 10%;
+}

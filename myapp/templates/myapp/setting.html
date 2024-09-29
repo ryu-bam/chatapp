@@ -1,1 +1,38 @@
-S
+{% extends "myapp/base.html" %}
+
+{% load static %}
+
+{% block extra_style %}<link rel="stylesheet" type="text/css" href="{% static 'myapp/css/setting.css' %}" />{% endblock %}
+
+{% block header-title %}設定{% endblock %}
+
+{% block content %}
+<div class="settings">
+    <a href="{% url "myapp:update" update_id=1 %}">
+        <div class="update-box">
+            <p class="update-text">ユーザー名変更</p>
+        </div>
+    </a>
+    <a href="{% url "myapp:update" update_id=2 %}">
+        <div class="update-box">
+            <p class="update-text">メールアドレス変更</p>
+        </div>
+    </a>
+    <a href="{% url "myapp:update" update_id=3 %}">
+        <div class="update-box">
+            <p class="update-text">アイコン変更</p>
+        </div>
+    </a>
+    <a href="{% url "myapp:password_update" %}">
+        <div class="update-box">
+            <p class="update-text">パスワード変更</p>
+        </div>
+    </a>
+    <a href="{% url "myapp:logout_view" %}">
+        <div class="logout-box">
+            <p class="logout-text">ログアウト</p>
+        </div>
+    </a>
+</div>
+{% endblock %}
+<a href="{% url 'myapp:talk_room' friend_id=friend.id %}" class="talkroom-link">

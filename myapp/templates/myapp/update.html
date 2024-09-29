@@ -1,0 +1,45 @@
+{% extends "myapp/base.html" %}
+
+{% load static %}
+
+{% block extra_style %}<link rel="stylesheet" type="text/css" href="{% static 'myapp/css/update.css' %}" />{% endblock %}
+
+{% block header-title %}{{title}}{% endblock %}
+
+{% block content %}
+<form action="{% url 'myapp:update' id %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if id == 1 %}
+        <table>
+            <tr>
+                <td>{{ form.username.label_tag }}</td>
+                <td>{{ form.username }}</td>
+            </tr>
+        </tabel>
+    {% elif id == 2 %}
+        <table>
+            <tr>
+                <td>{{ form.email.label_tag }}</td>
+                <td>{{ form.email }}</td>
+            </tr>
+        </tabel>
+    {% elif id == 3 %}
+        <table>
+            <tr>
+                <td>{{ form.image.label_tag }}</td>
+                <td>{{ form.image }}</td>
+            </tr>
+        </tabel>
+    {% endif %}
+    <div class="button">
+        <button type="submit">submit</button>
+    </div>
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+</form>
+{% endblock %}

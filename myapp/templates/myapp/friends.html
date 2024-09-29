@@ -1,0 +1,96 @@
+{% extends "myapp/base.html" %}
+
+{% load static %}
+
+{% block extra_style %}
+<link rel="stylesheet" type="text/css" href="{% static 'myapp/css/friends.css' %}" />
+{% endblock extra_style %}
+
+{% block header-title %}友達{% endblock %}
+
+{% block content %}
+
+{% if message_ordered %}
+    {% for message in message_ordered %}
+        {% if user == message.to_user %}
+            {% with friend=message.from_user %}
+                <a href="{% url 'myapp:talk_room' friend_id=friend.id %}" class="talkroom-link">
+                    <div class="talkroom">
+                        <div class="icon">
+                            {% if friend.image %}
+                                <img src="{{ friend.image.url }}">
+                            {% else %}
+                                <img src="../../static/myapp/img/people-24px.svg">
+                            {% endif %}
+                        </div>
+                        <div class="center">
+                            <div class="username">
+                                {{ friend.username|truncatechars:10 }}
+                            </div>
+                            <div class="content">
+                                {{ message.content|truncatechars:20 }}
+                            </div>
+                        </div>
+                        <div class="pushed">
+                            <p class="pushed-date">{{ message.created_at|date:"n/d"}}</p>
+                            <p class="pushed-time">{{ message.created_at|date:"H:i"}}</p>
+                        </div>
+                    </div>
+                </a>
+            {% endwith %}
+        {% else %}
+            {% with friend=message.to_user %}
+                <a href="{% url 'myapp:talk_room' friend_id=friend.id %}" class="talkroom-link">
+                    <div class="talkroom">
+                        <div class="icon">
+                            {% if friend.image %}
+                                <img src="{{ friend.image.url }}">
+                            {% else %}
+                                <img src="../../static/myapp/img/people-24px.svg">
+                            {% endif %}
+                        </div>
+                        <div class="center">
+                            <div class="username">
+                                {{ friend.username|truncatechars:10 }}
+                            </div>
+                            <div class="content">
+                                {{ message.content|truncatechars:10 }}
+                            </div>
+                        </div>
+                        <div class="pushed">
+                            <p class="pushed-date">{{ message.created_at|date:"n/d"}}</p>
+                            <p class="pushed-time">{{ message.created_at|date:"H:i"}}</p>
+                        </div>
+                    </div>
+                </a>
+            {% endwith %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if friend_list %}
+    {% for friend in friend_list %}
+    <a href="{% url 'myapp:talk_room' friend_id=friend.id %}" class="talkroom-link">
+        <div class="talkroom">
+            <div class="icon">
+                {% if friend.image %}
+                    <img src="{{ friend.image.url }}">
+                {% else %}
+                    <img src="../../static/myapp/img/people-24px.svg">
+                {% endif %}
+            </div>
+            <div class="center">
+                <div class="username">
+                    {{ friend.username|truncatechars:10 }}
+                </div>
+                <div class="content"></div>
+            </div>
+            <div class="pushed"></div>
+        </div>
+    </a>
+    {% endfor %}
+{% endif %}
+
+{{ user }}
+
+{% endblock content %}
