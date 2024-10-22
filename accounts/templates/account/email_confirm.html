@@ -1,0 +1,24 @@
+{% extends "myapp/base.html" %}
+
+{% load static %}
+
+{% block header-title %}ユーザー登録{% endblock header-title %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="my-div-style">
+            {% if confirmation %}
+                <p>ユーザー登録を完了するには、以下のボタンを押してください</p>
+                <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+                    {% csrf_token %}
+                    <button class="btn btn-primary" type="submit">確定</button>
+                </form>
+            {% else %}
+                {% url "account_email" as email_url %}
+                <p>リンクの有効期限が過ぎています。<a href="{{ email_url }}">再申請</a></p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock footer %}

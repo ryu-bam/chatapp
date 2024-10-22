@@ -56,12 +56,26 @@ def login_view(request):
 @login_required
 def friends(request):
     user = request.user
-    friend_list = CustomUser.objects.exclude(id=user.id).order_by("-date_joined")
+    
+    query = request.GET.get('query')
+
+    if query:
+        # friend_list = CustomUser.objects.filter(username__icontains=query).exclude(id=user.id).order_by("-date_joined")
+        friend_list = CustomUser.objects.filter(username__icontains=query)
+        friend_list = friend_list.exclude(id=user.id).order_by("-date_joined")
+    else:
+        friend_list = CustomUser.objects.exclude(id=user.id).order_by("-date_joined")
+    
     message_ordered = []
 
     if Message.objects.filter(Q(from_user=user) | Q(to_user=user)).exists():
         message_list = Message.objects.filter(Q(from_user=user) | Q(to_user=user)).order_by("-created_at")
         for message in message_list:
+
+            if friend_list.filter(Q(username=message.from_user) | Q(username=message.to_user)).exists() == False:
+                continue
+
+
             saved_user = 0
 
             if message.from_user == user:

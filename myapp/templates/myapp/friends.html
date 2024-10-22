@@ -10,6 +10,11 @@
 
 {% block content %}
 
+<form action="" method="get">
+    <input name="query" value="{{ request.GET.query }}" type="text" />
+    <button type="submit">検索する</button>
+</form>
+
 {% if message_ordered %}
     {% for message in message_ordered %}
         {% if user == message.to_user %}
@@ -90,7 +95,5 @@
     </a>
     {% endfor %}
 {% endif %}
-
-{{ user }}
 
 {% endblock content %}

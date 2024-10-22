@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 app_name = "myapp"
@@ -14,4 +14,6 @@ urlpatterns = [
     path('password_update', views.PasswordChange.as_view(), name='password_update'),
     path('password_updated', views.password_updated, name='password_updated'),
     path('logout', views.logout_view, name='logout_view'),
+
+    path('account_signup', include('allauth.urls')),
 ]
