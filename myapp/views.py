@@ -2,7 +2,8 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, Max, F, OuterRef, Subquery
+from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse_lazy
 
 from .models import CustomUser, Message
@@ -56,46 +57,62 @@ def login_view(request):
 @login_required
 def friends(request):
     user = request.user
-    
+
+    latest_msg = Message.objects.filter(
+        Q(from_user=OuterRef('pk'), to_user=user)
+        | Q(from_user=user, to_user=OuterRef('pk'))
+    ).order_by('-created_at')
+
+    friends = (
+        CustomUser.objects.exclude(id=user.id)
+        .annotate(
+            send_max=Max('from_user__created_at', filter=Q(from_user__to_user=user)),
+            receive_max=Max('to_user__created_at', filter=Q(to_user__from_user=user)),
+            latest_time=Greatest("send_max", "receive_max"),
+            latest_msg_time=Coalesce("latest_time", "send_max", "receive_max"),
+            latest_msg_talk=Subquery(latest_msg.values('content')[:1])
+        ).order_by(F('latest_msg_time').desc(nulls_last=True))
+    )
+
     query = request.GET.get('query')
 
     if query:
-        # friend_list = CustomUser.objects.filter(username__icontains=query).exclude(id=user.id).order_by("-date_joined")
-        friend_list = CustomUser.objects.filter(username__icontains=query)
-        friend_list = friend_list.exclude(id=user.id).order_by("-date_joined")
-    else:
-        friend_list = CustomUser.objects.exclude(id=user.id).order_by("-date_joined")
+        friends = friends.filter(Q(username__icontains=query) | Q(email__icontains=query))
+        
+
+    # if Message.objects.filter(Q(from_user=user) | Q(to_user=user)).exists():
+    #     message_list = Message.objects.filter(Q(from_user=user) | Q(to_user=user)).order_by("-created_at")
+    #     for message in message_list:
+
+    #         if friend_list.filter(Q(username=message.from_user) | Q(username=message.to_user)).exists() == False:
+    #             continue
+
+
+    #         saved_user = 0
+
+    #         if message.from_user == user:
+    #             saved_user = message.to_user
+                
+    #         else:
+    #             saved_user = message.from_user
+
+    #         if message_list.filter(id=message.id).exists():
+    #             friend_list = friend_list.exclude(id=saved_user.id)
+
+    #             message_ordered.append(message)
+    #             message_list = message_list.exclude(Q(from_user=saved_user) | Q(to_user=saved_user))
+                
+    #         if message_list.count() == 0:
+    #             break
+
+    # context = {
+    #     "friend_list": friend_list,
+    #     "message_ordered": message_ordered,
+    # }
     
-    message_ordered = []
-
-    if Message.objects.filter(Q(from_user=user) | Q(to_user=user)).exists():
-        message_list = Message.objects.filter(Q(from_user=user) | Q(to_user=user)).order_by("-created_at")
-        for message in message_list:
-
-            if friend_list.filter(Q(username=message.from_user) | Q(username=message.to_user)).exists() == False:
-                continue
-
-
-            saved_user = 0
-
-            if message.from_user == user:
-                saved_user = message.to_user
-                
-            else:
-                saved_user = message.from_user
-
-            if message_list.filter(id=message.id).exists():
-                friend_list = friend_list.exclude(id=saved_user.id)
-
-                message_ordered.append(message)
-                message_list = message_list.exclude(Q(from_user=saved_user) | Q(to_user=saved_user))
-                
-            if message_list.count() == 0:
-                break
 
     context = {
-        "friend_list": friend_list,
-        "message_ordered": message_ordered,
+        'friends': friends,
     }
 
     return render(request, "myapp/friends.html", context)

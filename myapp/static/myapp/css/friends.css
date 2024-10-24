@@ -15,7 +15,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1vh;
+    padding: 1vw;
 }
 
 .talkroom img {
@@ -26,25 +26,23 @@
 }
 
 .center {
-    padding: 1vh;
-    width: 78vh;
+    padding: 1vw;
+    width: 68vw;
 }
 
 .username {
     color: #000;
-    /* font-size: xx-large; */
     font-size: 4vh;
 }
 
 .content {
     color: #999;
-    /* font-size: medium; */
     font-size: 3vh;
 }
 
 .pushed {
     color: #999;
-    width: 10vh;
+    width: 10vw;
     margin: 1vh 0;
     padding-right: 1vh;
 }

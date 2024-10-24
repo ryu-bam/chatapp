@@ -15,7 +15,37 @@
     <button type="submit">検索する</button>
 </form>
 
-{% if message_ordered %}
+{% if friends %}
+    {% for friend in friends %}
+        <a href="{% url "myapp:talk_room" friend_id=friend.id %}" class="talkroom-link">
+            <div class="talkroom">
+                <div class="icon">
+                    {% if friend.image %}
+                        <img src="{{ friend.image.url }}" alt="image">
+                    {% else %}
+                        <img src="../../static/myapp/img/people-24px.svg">
+                    {% endif %}
+                </div>
+                <div class="center">
+                    <div class="username">
+                        {{ friend.username|truncatechars:10 }}
+                    </div>
+                    {% if friend.latest_msg_talk %}
+                        <div class="content">
+                            {{ friend.latest_msg_talk|truncatechars:20 }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="pushed">
+                    <p class="pushed-date">{{ friend.latest_msg_time|date:"n/d"}}</p>
+                    <p class="pushed-time">{{ friend.latest_msg_time|date:"H:i"}}</p>
+                </div>
+            </div>
+        </a>
+    {% endfor %}
+{% endif %}
+
+{% comment %} {% if message_ordered %}
     {% for message in message_ordered %}
         {% if user == message.to_user %}
             {% with friend=message.from_user %}
@@ -94,6 +124,6 @@
         </div>
     </a>
     {% endfor %}
-{% endif %}
+{% endif %} {% endcomment %}
 
 {% endblock content %}
